@@ -1,6 +1,23 @@
 import { Box } from "@mui/material";
+import { Link } from "react-router-dom";
+// import { useAuthStore } from "../store/AuthStore";
+// import useSWR from "swr";
+// import type { User } from "../dto/Types";
+// import { useEffect } from "react";
 
 export const Entrance: React.FC = () => {
+  //   const { isLoggedIn, logout } = useAuthStore();
+
+  //   const checkLogin = () => {
+  //     // 未ログインの場合、ログインページへ遷移
+  //   };
+
+  //   useEffect(() => {
+  //     console.log("未ログイン：ログインページ遷移");
+  //     if (!isLoggedIn) {
+  //     }
+  //   }, []);
+
   return (
     <>
       <Box
@@ -20,6 +37,10 @@ export const Entrance: React.FC = () => {
         <div>ログイン済みの場合表示</div>
 
         <div>未ログインの場合はログイン画面へ遷移</div>
+
+        <Link to="/login">
+          <button style={{ fontSize: "18px", padding: "10px 20px" }}>ログイン画面へ</button>
+        </Link>
       </Box>
     </>
   );
