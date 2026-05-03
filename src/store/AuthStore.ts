@@ -1,22 +1,28 @@
 import { create } from "zustand";
-import type { User } from "../dto/Types";
+import type { UserInfo } from "../dto/Types";
 
 type AuthState = {
   isLoggedIn: boolean;
-  user: User | null;
-  login: (token: string, user: User) => void;
-  logout: () => void;
+  user: UserInfo | null;
+  setToken: (token: string, user: UserInfo) => void;
+  removeToken: () => void;
 };
 
-export const useAuthStore = create<AuthState>((set) => ({
+export const useAuthStore = create<AuthState>((set, get) => ({
+  // !(getItem==null)をセット
   isLoggedIn: !!localStorage.getItem("token"),
   user: null,
-  login: (token: string, user: User) => {
+  setToken: (token: string, user: UserInfo) => {
     localStorage.setItem("token", token);
-    set({ isLoggedIn: true, user });
+    set({
+      isLoggedIn: true,
+      user,
+    });
   },
-  logout: () => {
+  removeToken: () => {
     localStorage.removeItem("token");
     set({ isLoggedIn: false, user: null });
+    const data = get();
+    console.log(`logout/ isLoggedIn: ${data.isLoggedIn}, user: ${data.user}`);
   },
 }));

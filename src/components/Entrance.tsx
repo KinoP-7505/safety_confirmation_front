@@ -1,46 +1,79 @@
-import { Box } from "@mui/material";
-import { Link } from "react-router-dom";
-// import { useAuthStore } from "../store/AuthStore";
-// import useSWR from "swr";
-// import type { User } from "../dto/Types";
-// import { useEffect } from "react";
+import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
+import { AppBar, Box, Button, Menu, MenuItem, Toolbar, Typography } from "@mui/material";
+import { useEffect, useState } from "react";
+import { Link, Outlet, useNavigate } from "react-router-dom";
+import { useAuthStore } from "../store/AuthStore";
 
 export const Entrance: React.FC = () => {
-  //   const { isLoggedIn, logout } = useAuthStore();
+  const authStore = useAuthStore();
+  const navi = useNavigate();
 
-  //   const checkLogin = () => {
-  //     // 未ログインの場合、ログインページへ遷移
-  //   };
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
-  //   useEffect(() => {
-  //     console.log("未ログイン：ログインページ遷移");
-  //     if (!isLoggedIn) {
-  //     }
-  //   }, []);
+  const handleClose = () => setAnchorEl(null);
+
+  useEffect(() => {
+    console.log("未ログイン：ログインページ遷移");
+    console.log(`authStore.isLoggedIn = ${authStore.isLoggedIn}`);
+    if (!authStore.isLoggedIn) {
+      navi("/login");
+    }
+  }, [authStore.isLoggedIn, navi]);
+
+  const hadleLogout = () => {
+    authStore.removeToken();
+    navi("/login");
+  };
 
   return (
     <>
-      <Box
-        sx={{
-          width: 1000, // 単位なしはデフォルトで 'px'
-          height: 600,
-          display: "flex",
-          flexDirection: "column", // 子要素を縦に並べる
-          justifyContent: "center", // 縦方向の中央揃え
-          alignItems: "center", // 横方向の中央揃え
-          border: "1px solid #ccc", // 範囲をわかりやすくするための枠線
-          gap: 1, // テキスト間の余白（8px単位）
-        }}
-      >
-        <div>エントランスページ</div>
+      <Box sx={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
+        <AppBar position="fixed" elevation={0} sx={{ backgroundColor: "#ffcaca", color: "#333" }}>
+          <Toolbar>
+            <Typography
+              variant="h6"
+              component={Link}
+              to="/"
+              sx={{ flexGrow: 1, textDecoration: "none", color: "inherit", fontWeight: "bold" }}
+            >
+              MODERN APP
+            </Typography>
 
-        <div>ログイン済みの場合表示</div>
+            <Box>
+              <Button onClick={() => hadleLogout()}>ログアウト処理</Button>
+              <Button component={Link} to="/">
+                Home
+              </Button>
 
-        <div>未ログインの場合はログイン画面へ遷移</div>
-
-        <Link to="/login">
-          <button style={{ fontSize: "18px", padding: "10px 20px" }}>ログイン画面へ</button>
-        </Link>
+              <Button variant="outlined" endIcon={<KeyboardArrowDownIcon />} onClick={(e) => setAnchorEl(e.currentTarget)}>
+                サービス
+              </Button>
+              <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleClose}>
+                <MenuItem component={Link} to="/samp1" onClick={handleClose}>
+                  サンプル１
+                </MenuItem>
+                <MenuItem component={Link} to="/samp2" onClick={handleClose}>
+                  サンプル２
+                </MenuItem>
+                <MenuItem component={Link} to="/samp1" onClick={handleClose}>
+                  サンプル３
+                </MenuItem>
+              </Menu>
+            </Box>
+          </Toolbar>
+        </AppBar>
+        <Toolbar />
+        {/* 3. メインコンテンツエリア */}
+        <Box
+          component="main"
+          sx={{
+            flexGrow: 1, // 残りの画面領域をすべて埋める
+            p: 3, // コンテンツの周りに適切なパディングを付与
+            backgroundColor: (theme) => theme.palette.grey[50], // 背景色を薄くつける場合
+          }}
+        >
+          <Outlet />
+        </Box>
       </Box>
     </>
   );

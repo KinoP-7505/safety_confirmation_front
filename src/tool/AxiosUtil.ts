@@ -1,8 +1,8 @@
 import axios from "axios"; // Axiosクライアント
 
 const baseUrl = "http://127.0.0.1:8080/api"; // 接続先ドメイン+API
-export const END_POINT = {
-  login: "/login",
+export const API_PATH = {
+  login: "/auth/login",
 };
 
 const axiosClient = axios.create({
@@ -14,8 +14,14 @@ const axiosClient = axios.create({
   },
 });
 
-// axiosFether
+// axiosFether(GET用)
 export const fetcher = async <T>(url: string): Promise<T> => {
   const res = await axiosClient.get<T>(url);
+  return res.data;
+};
+
+// POST用フェッチャー (useSWRMutation用)
+export const postFetcher = async <T, R>(url: string, { arg }: { arg: R }): Promise<T> => {
+  const res = await axiosClient.post<T>(url, arg);
   return res.data;
 };
